@@ -25,6 +25,7 @@ int main(){
     printf("%d", k);
     double **K, **D, **M, *F;
     int n;
+    double a[200],b[200],c[200];
     //scanf("%d",&n);
     complex** A;
     n=k;
@@ -52,10 +53,14 @@ int main(){
     for (i=0;i<n;i++){
         for (j=0;j<n;j++){
             A[i][j]=w*w*M[i][j]+K[i][j] +w*D[i][j]*I;
-        }
-        //printf("\n");
+        }        
     }
     
+    for (i=1;i<(n-1);i++){
+        a[i+1]=A[i+1][i];
+        b[i]=A[i][i];
+        c[i-1]=A[i][i+1];
+    }
 return 0; 
 }
 
