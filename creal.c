@@ -6,7 +6,7 @@
 #define N 200//размер расчетной прямой
 #define w 5 //частота
 #define tmax 10 // нужный момент времени
-//double N;
+
 
 void EMatr(int n, double** );
 double gf(double m);
@@ -29,7 +29,7 @@ int main(){
     printf("%f\n", h);
     double **K, **D, **M, *F;
     int n;
-    double *a,*b,*c;
+    complex *a,*b,*c,*u;
     //scanf("%d",&n);
     complex** A;
     n=k;
@@ -50,7 +50,7 @@ int main(){
     }
     
     //EMatr(n,E);
-    FMatr(n,h,F );	
+    FMatr(n,h,F);	
     DMatr(n, D);
     KMatr(n, K);
     MMatr(n, M);
@@ -61,30 +61,26 @@ int main(){
             K[i][j]=K[i][j]/h;
             M[i][j]=M[i][j]*h/6;
             //D[i][j]=D[i][j];
-    
         }        
     }
     for (i=0;i<n;i++){
        for (j=0;j<n;j++){
            A[i][j]=-w*w*M[i][j]+K[i][j] +w*D[i][j]*I;
-       
        }        
-      
     }
-    
     for (i=0;i<4;i++){
-       for (j=0;j<4;j++){
-           printf("A[%d][%d]=%lf    ",i,j,creal(A[i][j]));
-       
-       }        
-      printf("\n");
+        for (j=0;j<4;j++){
+            printf("A[%d][%d]=%lf    ",i,j,creal(A[i][j]));
+            }        
+        printf("\n");
    }
     
     
     
-    a = (double*)malloc((n)  * sizeof(double));
-    b = (double*)malloc((n)  * sizeof(double));
-    c = (double*)malloc((n)  * sizeof(double));
+    a = (complex*)malloc((n)  * sizeof(complex));
+    b = (complex*)malloc((n)  * sizeof(complex));
+    c = (complex*)malloc((n)  * sizeof(complex));
+    u = (complex*)malloc((n)  * sizeof(complex));
     
    
     for (i=1;i<(n-1);i++){
@@ -99,11 +95,55 @@ int main(){
     b[n-1]=A[n-1][n-1];
     c[n-2]=A[n-1][n-2];
     c[n-1]=0;
-     for (i=0;i<4;i++){
-        printf("a[%d]=%lf   b[%d]=%lf  c[%d]=%lf  \n",i,a[i],i,b[i],i,c[i]);       
-//        printf("b[%d]=%lf\n",i,b[i]);        
-    }
-return 0; 
+//      for (i=0;i<4;i++){
+//         printf("F[%d]=%lf   b[%d]=%lf  c[%d]=%lf  \n",i,F[i],i,b[i],i,c[i]);       
+// //        printf("b[%d]=%lf\n",i,b[i]);        
+//     }
+    for (j=n;j<k;j++) {
+            a[j]=0;
+            b[j]=1;
+            c[j]=0;
+            F[j]=0;
+      }
+      
+    int s=1;
+    complex Ctemp,Atemp;
+	
+    while (s<=(k)/2){
+	//the first and the last eq-s
+	Ctemp=-c[0]/b[s];
+	b[0]= b[0]+Ctemp*a[s];
+	F[0]=F[0]+Ctemp*F[s];
+	c[0]=Ctemp*c[s];
+	
+	Atemp=-a[k-1]/b[k-s-1];
+	b[k-1]=b[k-1]+Atemp*a[k-s-1];
+	F[k-1]=F[k-1]+Atemp*F[k-s-1];
+	a[k-1]=Atemp*a[k-s-1];
+	
+	j=2*s;
+
+	while (j<(k-1)){
+	    //others eq-s
+	    Atemp=-a[j]/b[j-s];
+	    Ctemp=-c[j]/b[j+s];
+	    //#print(c(Atemp, Ctemp))
+	    
+	    b[j]= b[j]+Atemp*c[j-s]+Ctemp*a[j+s];
+	    F[j]= F[j]+Atemp*F[j-s]+Ctemp*F[j+s];
+	    a[j]= a[j-s]*Atemp;
+	    c[j]= c[j+s]*Ctemp;
+	    j=j+2*s;
+	    
+	    }
+	s=s*2;
+            }
+            //now we can calculate 
+    u[0]=(F[0]*b[k-1]-c[0]*F[k-1])/(b[0]*b[k-1]-a[k-1]*c[0]);  
+    u[k-1]=(F[k-1]*b[0]-a[k-1]*F[0])/(b[0]*b[k-1]-a[k-1]*c[0]);
+    printf ("UUU%lf",creal( u[0]) ) ;
+         
+return 0 ;
 }
 
 void DMatr(int n, double** M){
