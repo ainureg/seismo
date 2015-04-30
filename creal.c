@@ -126,7 +126,6 @@ int main(){
 	j=2*s;
 
 	while (j<=(k-1)){
-	    q++;
 	    //others eq-s
 	    Atemp=-a[j]/b[j-s];
 	    Ctemp=-c[j]/b[j+s];
@@ -144,7 +143,21 @@ int main(){
             //now we can calculate 
     u[0]=(F[0]*b[k]-c[0]*F[k])/(b[0]*b[k]-a[k]*c[0]);  
     u[k]=(F[k]*b[0]-a[k]*F[0])/(b[0]*b[k]-a[k]*c[0]);
-    printf ("UUU=%lf+%lf*I\n",creal( u[0]),cimag(u[0]) ) ;
+//     printf ("UUU=%lf+%lf*I\n",creal( u[0]),cimag(u[0]) ) ;
+//     printf("%d\n",q);
+    s=(k)/2;
+    while (s>=1){
+        j=s;
+        while (j<(k)){
+            q++;
+            u[j]=(-F[j]-a[j]*u[j-s]-c[j]*u[j+s])/b[j];
+            j=j+2*s;
+        }
+    s=s/2;
+    }
+    for (i=195;i<205;i++){
+        printf("u[%d] = %lf+%lf \n",i,creal(u[i]),cimag(u[i]));
+    }
     printf("%d\n",q);
          
 return 0 ;
