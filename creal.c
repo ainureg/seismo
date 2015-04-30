@@ -20,19 +20,19 @@ int main(){
     double h;
     double N1=200;
     h=1/N1;//шаг по прямой
-    printf("%lf\n",h);
+    //printf("%lf\n",h);
     double t=h/2 ;//шаг по времени
     double Nt=tmax/t ;// шагов по времени
     int k;
     k=(int)pow(2,(int)ceil(log(N-1)/log(2)));
     int i,j;
-    printf("%f\n", h);
     double **K, **D, **M, *F;
-    int n;
+    int n,n1;
     complex *a,*b,*c,*u;
     //scanf("%d",&n);
     complex** A;
-    n=k;
+    n1=200;
+    n=(k+1);
     K = (double**)malloc((n) * sizeof(double*));
     M = (double**)malloc((n) * sizeof(double*));
     F = (double*)malloc((n)  * sizeof(double));
@@ -50,30 +50,30 @@ int main(){
     }
     
     //EMatr(n,E);
-    FMatr(n,h,F);	
-    DMatr(n, D);
-    KMatr(n, K);
-    MMatr(n, M);
+    FMatr(n1,h,F);	
+    DMatr(n1, D);
+    KMatr(n1, K);
+    MMatr(n1, M);
 
     
-    for (i=0;i<n;i++){
-        for (j=0;j<n;j++){
+    for (i=0;i<n1;i++){
+        for (j=0;j<n1;j++){
             K[i][j]=K[i][j]/h;
             M[i][j]=M[i][j]*h/6;
             //D[i][j]=D[i][j];
         }        
     }
-    for (i=0;i<n;i++){
-       for (j=0;j<n;j++){
+    for (i=0;i<n1;i++){
+       for (j=0;j<n1;j++){
            A[i][j]=-w*w*M[i][j]+K[i][j] +w*D[i][j]*I;
        }        
     }
-    for (i=0;i<4;i++){
-        for (j=0;j<4;j++){
-            printf("A[%d][%d]=%lf    ",i,j,creal(A[i][j]));
-            }        
-        printf("\n");
-   }
+//     for (i=0;i<4;i++){
+//         for (j=0;j<4;j++){
+//             printf("A[%d][%d]=%lf    ",i,j,creal(A[i][j]));
+//             }        
+//         printf("\n");
+//    }
     
     
     
@@ -83,31 +83,33 @@ int main(){
     u = (complex*)malloc((n)  * sizeof(complex));
     
    
-    for (i=1;i<(n-1);i++){
+    for (i=1;i<(n1-1);i++){
         a[i+1]=A[i+1][i];
         b[i]=A[i][i];
-        c[i-1]=A[i][i+1];
+        c[i-1]=A[i][i-1];
     }
     a[0]=0;
-    a[1]=A[2][1];
-    a[n-1]= A[n-1][n-2];
+    a[1]=A[1][0];
+    a[n1-1]= A[n1-1][n1-2];
     b[0]=A[0][0];
-    b[n-1]=A[n-1][n-1];
-    c[n-2]=A[n-1][n-2];
-    c[n-1]=0;
-//      for (i=0;i<4;i++){
-//         printf("F[%d]=%lf   b[%d]=%lf  c[%d]=%lf  \n",i,F[i],i,b[i],i,c[i]);       
-// //        printf("b[%d]=%lf\n",i,b[i]);        
-//     }
-    for (j=n;j<k;j++) {
+    b[n1-1]=A[n1-1][n1-1];
+    c[n1-2]=A[n1-1][n1-2];
+    c[n1-1]=0;
+     
+    for (j=n1;j<(n);j++) {
             a[j]=0;
             b[j]=1;
             c[j]=0;
             F[j]=0;
       }
+//     for (i=195;i<201;i++){
+//          printf("F[%d]=%lf   b[%d]=%lf  c[%d]=%lf   a[%d] = %lf \n",i,creal(F[i]),i,creal(b[i]),i,creal(c[i]), i,creal(a[i]));
+//         }
       
     int s=1;
     complex Ctemp,Atemp;
+    int q;
+    q=0;
 	
     while (s<=(k)/2){
 	//the first and the last eq-s
@@ -116,14 +118,15 @@ int main(){
 	F[0]=F[0]+Ctemp*F[s];
 	c[0]=Ctemp*c[s];
 	
-	Atemp=-a[k-1]/b[k-s-1];
-	b[k-1]=b[k-1]+Atemp*a[k-s-1];
-	F[k-1]=F[k-1]+Atemp*F[k-s-1];
-	a[k-1]=Atemp*a[k-s-1];
+	Atemp=-a[k]/b[k-s];
+	b[k]=b[k]+Atemp*a[k-s];
+	F[k]=F[k]+Atemp*F[k-s];
+	a[k]=Atemp*a[k-s];
 	
 	j=2*s;
 
-	while (j<(k-1)){
+	while (j<=(k-1)){
+	    q++;
 	    //others eq-s
 	    Atemp=-a[j]/b[j-s];
 	    Ctemp=-c[j]/b[j+s];
@@ -139,9 +142,10 @@ int main(){
 	s=s*2;
             }
             //now we can calculate 
-    u[0]=(F[0]*b[k-1]-c[0]*F[k-1])/(b[0]*b[k-1]-a[k-1]*c[0]);  
-    u[k-1]=(F[k-1]*b[0]-a[k-1]*F[0])/(b[0]*b[k-1]-a[k-1]*c[0]);
-    printf ("UUU%lf",creal( u[0]) ) ;
+    u[0]=(F[0]*b[k]-c[0]*F[k])/(b[0]*b[k]-a[k]*c[0]);  
+    u[k]=(F[k]*b[0]-a[k]*F[0])/(b[0]*b[k]-a[k]*c[0]);
+    printf ("UUU=%lf+%lf*I\n",creal( u[0]),cimag(u[0]) ) ;
+    printf("%d\n",q);
          
 return 0 ;
 }
