@@ -176,4 +176,10 @@ void MMatr(int n, double **M ){
         }
 
     M[n-1][n-1]=2*(gf(n-0.5));
-    }     
+    }
+double sigm(x, mu ){
+if (x <= 1)
+    return  0;
+else
+    return mu * (x - 1)*(x-1);
+    }
