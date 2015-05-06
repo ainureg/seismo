@@ -15,7 +15,7 @@ complex sigm (double x);
 complex prm(double x);
 void EMatr(int n, complex** );
 complex gf(complex m);
-complex cf(complex x);
+double cf(double x);
 void FMatr(int n, complex* );	
 void DMatr(int n, complex** );
 void KMatr(int n, complex** );
@@ -64,10 +64,10 @@ int main(){
             //D[i][j]=D[i][j];
         }        
     }
-    
+    printf("%f+%f\n",creal(prm (3.5)),cimag(prm(3.5)));
     for (i=0;i<20;i++){
         for (j=0;j<20;j++){
-        if (creal(M[i][j])!=0)    printf("M[%d] = %lf+%lf   ",i,creal(M[i][j]),cimag(M[i][j]));
+        if (creal(M[i][j])!=0)    printf("M[%d][%d] = %lf+%lf   ",i,j,creal(M[i][j]),cimag(M[i][j]));
         }
         printf("\n");
     }
@@ -159,8 +159,11 @@ void FMatr(int n, complex* M){
     double w=5;
     M[0]=w*w*h*gf(0.5)*prm(0.5)/6+1/h/prm(0.5);
     }
-complex cf(complex x){
+double cf(double x){
+    if (x<=1)
     return (0.1 +3.6*(x-0.5)*(x-0.5));
+    else
+    return 1;
     }
 void EMatr(int n,complex** M){
     int i;
@@ -179,8 +182,6 @@ void KMatr(int n, complex** M){
     }
 void MMatr(int n, complex **M ){      
     int i;
-    double w=5;
-    double h=1/N;
     for (i=0;i<(n-1);i++){
         M[i][i]=2*(gf(i+0.5)*prm(i+0.5)+gf(i+1.5)*prm(i+1.5));
         M[i+1][i]=gf(i+1.5)*prm(i+1.5);
