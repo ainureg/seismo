@@ -138,7 +138,7 @@ int main(){
     //now we can calculate 
     u[0]=(F[0]*b[k]-c[0]*F[k])/(b[0]*b[k]-a[k]*c[0]);  
     u[k]=(F[k]*b[0]-a[k]*F[0])/(b[0]*b[k]-a[k]*c[0]);
-         printf("u[%d] = %lf+%lf \n",0,creal(u[0]),cimag(u[0]));
+    //     printf("u[%d] = %lf+%lf \n",0,creal(u[0]),cimag(u[0]));
     
     
     
