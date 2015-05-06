@@ -12,10 +12,10 @@ double mu=10;
 double const w = 5;
 double h=(double) 2/N;//шаг по прямой;
 complex sigm (double x);
-complex prm(double x);
+complex prm(double m);
 void EMatr(int n, complex** );
-complex gf(complex m);
-double cf(double x);
+double gf(double m);
+double cf(double m);
 void FMatr(int n, complex* );	
 void DMatr(int n, complex** );
 void KMatr(int n, complex** );
@@ -64,13 +64,13 @@ int main(){
             //D[i][j]=D[i][j];
         }        
     }
-    printf("%f+%f\n",creal(prm (3.5)),cimag(prm(3.5)));
-    for (i=0;i<20;i++){
-        for (j=0;j<20;j++){
-        if (creal(M[i][j])!=0)    printf("M[%d][%d] = %lf+%lf   ",i,j,creal(M[i][j]),cimag(M[i][j]));
-        }
-        printf("\n");
-    }
+//     printf("%f+%f\n",creal(prm( (3.5))),cimag(prm(3.5)));
+//     for (i=300;i<320;i++){
+//         for (j=300;j<320;j++){
+//         if (creal(M[i][j])!=0)    printf("M[%d][%d] = %lf+%lf   ",i,j,creal(h/6*gf(i+1.5)*prm(i+1.5)),cimag(h/6*gf(i+1.5)*prm(i+1.5)));
+//         }
+//         printf("\n");
+//     }
 
     
     
@@ -105,49 +105,55 @@ int main(){
             F[j]=0;
       }
       
-//     int s=1;
-//     complex Ctemp,Atemp;
-//     
-//     while (s<=(k)/2){
-// 	//the first and the last eq-s
-// 	Ctemp=-c[0]/b[s];
-// 	b[0]= b[0]+Ctemp*a[s];
-// 	F[0]=F[0]+Ctemp*F[s];
-// 	c[0]=Ctemp*c[s];
-// 	
-// 	Atemp=-a[k]/b[k-s];
-// 	b[k]=b[k]+Atemp*a[k-s];
-// 	F[k]=F[k]+Atemp*F[k-s];
-// 	a[k]=Atemp*a[k-s];
-// 	
-// 	j=2*s;
-// 	while (j<=(k-1)){
-// 	    //others eq-s
-// 	    Atemp=-a[j]/b[j-s];
-// 	    Ctemp=-c[j]/b[j+s];
-// 	    	    
-// 	    b[j]= b[j]+Atemp*c[j-s]+Ctemp*a[j+s];
-// 	    F[j]= F[j]+Atemp*F[j-s]+Ctemp*F[j+s];
-// 	    a[j]= a[j-s]*Atemp;
-// 	    c[j]= c[j+s]*Ctemp;
-// 	    j=j+2*s;
-// 	       
-// 	}
-// 	s=s*2;
-//             }
-//     //now we can calculate 
-//     u[0]=(F[0]*b[k]-c[0]*F[k])/(b[0]*b[k]-a[k]*c[0]);  
-//     u[k]=(F[k]*b[0]-a[k]*F[0])/(b[0]*b[k]-a[k]*c[0]);
-//     s=(k)/2;
-//     while (s>=1){
-//         j=s;
-//         while (j<(k)){
-//             u[j]=(F[j]-a[j]*u[j-s]-c[j]*u[j+s])/b[j];
-//             j=j+2*s;
-//         }
-//     s=s/2;
-//    }
+    int s=1;
+    complex Ctemp,Atemp;
     
+    while (s<=(k)/2){
+	//the first and the last eq-s
+	Ctemp=-c[0]/b[s];
+	b[0]= b[0]+Ctemp*a[s];
+	F[0]=F[0]+Ctemp*F[s];
+	c[0]=Ctemp*c[s];
+	
+	Atemp=-a[k]/b[k-s];
+	b[k]=b[k]+Atemp*a[k-s];
+	F[k]=F[k]+Atemp*F[k-s];
+	a[k]=Atemp*a[k-s];
+	
+	j=2*s;
+	while (j<=(k-1)){
+	    //others eq-s
+	    Atemp=-a[j]/b[j-s];
+	    Ctemp=-c[j]/b[j+s];
+	    	    
+	    b[j]= b[j]+Atemp*c[j-s]+Ctemp*a[j+s];
+	    F[j]= F[j]+Atemp*F[j-s]+Ctemp*F[j+s];
+	    a[j]= a[j-s]*Atemp;
+	    c[j]= c[j+s]*Ctemp;
+	    j=j+2*s;
+	       
+	}
+	s=s*2;
+            }
+    //now we can calculate 
+    u[0]=(F[0]*b[k]-c[0]*F[k])/(b[0]*b[k]-a[k]*c[0]);  
+    u[k]=(F[k]*b[0]-a[k]*F[0])/(b[0]*b[k]-a[k]*c[0]);
+         printf("u[%d] = %lf+%lf \n",0,creal(u[0]),cimag(u[0]));
+    
+    
+    
+    s=(k)/2;
+    while (s>=1){
+        j=s;
+        while (j<(k)){
+            u[j]=(F[j]-a[j]*u[j-s]-c[j]*u[j+s])/b[j];
+            j=j+2*s;
+        }
+    s=s/2;
+   }
+     for (i=0;i<5;i++){
+        printf("u[%d] = %lf+%lf \n",i,creal(u[i]),cimag(u[i]));
+    }
          
 return 0 ;
 }
@@ -156,7 +162,6 @@ void DMatr(int n, complex** M){
     M[n-1][n-1]=1/cf(1);
     }
 void FMatr(int n, complex* M){
-    double w=5;
     M[0]=w*w*h*gf(0.5)*prm(0.5)/6+1/h/prm(0.5);
     }
 double cf(double x){
@@ -174,9 +179,9 @@ void EMatr(int n,complex** M){
 void KMatr(int n, complex** M){
     int i;
     for (i=0;i<(n-1);i++){
-        M[i][i]=1/prm(i-0.5)+1/prm(i+0.5);
-        M[i+1][i]=-1/prm(i+0.5);
-        M[i][i+1]=-1/prm(i+0.5);
+        M[i][i]=1/prm(i+0.5)+1/prm(i+1.5);
+        M[i+1][i]=-1/prm(i+1.5);
+        M[i][i+1]=-1/prm(i+1.5);
 }
     M[n-1][n-1]=1/prm(n-0.5);
     }
@@ -191,10 +196,10 @@ void MMatr(int n, complex **M ){
     M[n-1][n-1]=2*(gf(n-0.5))*prm(n-0.5);
     }
 complex prm ( double x){
-    return (w - I * sigm(x))*h/w/2;
+    return (w - I * sigm(x*h))/w;
     }    
-complex gf(complex m){
-    return ( ( 1/cf(m/N) ) / cf(m/N) );
+double gf(double m){
+    return ( ( 1/cf(m*h) ) / cf(m*h) );
     }    
 complex sigm(double x){
 if (x <= 1)
