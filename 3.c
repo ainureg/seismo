@@ -64,9 +64,19 @@ int main(){
             //D[i][j]=D[i][j];
         }        
     }
+    
+    for (i=0;i<20;i++){
+        for (j=0;j<20;j++){
+        if (creal(M[i][j])!=0)    printf("M[%d] = %lf+%lf   ",i,creal(M[i][j]),cimag(M[i][j]));
+        }
+        printf("\n");
+    }
+
+    
+    
     for (i=0;i<N;i++){
        for (j=0;j<N;j++){
-           A[i][j]=-w*w*M[i][j]+K[i][j] +w*D[i][j]*I;
+           A[i][j]=-w*w*M[i][j]+K[i][j];// +w*D[i][j]*I;
        }        
     }
 
@@ -95,51 +105,48 @@ int main(){
             F[j]=0;
       }
       
-    int s=1;
-    complex Ctemp,Atemp;
-    
-    while (s<=(k)/2){
-	//the first and the last eq-s
-	Ctemp=-c[0]/b[s];
-	b[0]= b[0]+Ctemp*a[s];
-	F[0]=F[0]+Ctemp*F[s];
-	c[0]=Ctemp*c[s];
-	
-	Atemp=-a[k]/b[k-s];
-	b[k]=b[k]+Atemp*a[k-s];
-	F[k]=F[k]+Atemp*F[k-s];
-	a[k]=Atemp*a[k-s];
-	
-	j=2*s;
-	while (j<=(k-1)){
-	    //others eq-s
-	    Atemp=-a[j]/b[j-s];
-	    Ctemp=-c[j]/b[j+s];
-	    	    
-	    b[j]= b[j]+Atemp*c[j-s]+Ctemp*a[j+s];
-	    F[j]= F[j]+Atemp*F[j-s]+Ctemp*F[j+s];
-	    a[j]= a[j-s]*Atemp;
-	    c[j]= c[j+s]*Ctemp;
-	    j=j+2*s;
-	       
-	}
-	s=s*2;
-            }
-    //now we can calculate 
-    u[0]=(F[0]*b[k]-c[0]*F[k])/(b[0]*b[k]-a[k]*c[0]);  
-    u[k]=(F[k]*b[0]-a[k]*F[0])/(b[0]*b[k]-a[k]*c[0]);
-    s=(k)/2;
-    while (s>=1){
-        j=s;
-        while (j<(k)){
-            u[j]=(F[j]-a[j]*u[j-s]-c[j]*u[j+s])/b[j];
-            j=j+2*s;
-        }
-    s=s/2;
-    }
-    for (i=195;i<205;i++){
-        printf("u[%d] = %lf+%lf \n",i,creal(u[i]),cimag(u[i]));
-    }
+//     int s=1;
+//     complex Ctemp,Atemp;
+//     
+//     while (s<=(k)/2){
+// 	//the first and the last eq-s
+// 	Ctemp=-c[0]/b[s];
+// 	b[0]= b[0]+Ctemp*a[s];
+// 	F[0]=F[0]+Ctemp*F[s];
+// 	c[0]=Ctemp*c[s];
+// 	
+// 	Atemp=-a[k]/b[k-s];
+// 	b[k]=b[k]+Atemp*a[k-s];
+// 	F[k]=F[k]+Atemp*F[k-s];
+// 	a[k]=Atemp*a[k-s];
+// 	
+// 	j=2*s;
+// 	while (j<=(k-1)){
+// 	    //others eq-s
+// 	    Atemp=-a[j]/b[j-s];
+// 	    Ctemp=-c[j]/b[j+s];
+// 	    	    
+// 	    b[j]= b[j]+Atemp*c[j-s]+Ctemp*a[j+s];
+// 	    F[j]= F[j]+Atemp*F[j-s]+Ctemp*F[j+s];
+// 	    a[j]= a[j-s]*Atemp;
+// 	    c[j]= c[j+s]*Ctemp;
+// 	    j=j+2*s;
+// 	       
+// 	}
+// 	s=s*2;
+//             }
+//     //now we can calculate 
+//     u[0]=(F[0]*b[k]-c[0]*F[k])/(b[0]*b[k]-a[k]*c[0]);  
+//     u[k]=(F[k]*b[0]-a[k]*F[0])/(b[0]*b[k]-a[k]*c[0]);
+//     s=(k)/2;
+//     while (s>=1){
+//         j=s;
+//         while (j<(k)){
+//             u[j]=(F[j]-a[j]*u[j-s]-c[j]*u[j+s])/b[j];
+//             j=j+2*s;
+//         }
+//     s=s/2;
+//    }
     
          
 return 0 ;
@@ -150,7 +157,7 @@ void DMatr(int n, complex** M){
     }
 void FMatr(int n, complex* M){
     double w=5;
-    M[0]=w*w*h*gf(0.5)/6+1/h;
+    M[0]=w*w*h*gf(0.5)*prm(0.5)/6+1/h/prm(0.5);
     }
 complex cf(complex x){
     return (0.1 +3.6*(x-0.5)*(x-0.5));
@@ -164,11 +171,11 @@ void EMatr(int n,complex** M){
 void KMatr(int n, complex** M){
     int i;
     for (i=0;i<(n-1);i++){
-        M[i][i]=2;
-        M[i+1][i]=-1;
-        M[i][i+1]=-1;
+        M[i][i]=1/prm(i-0.5)+1/prm(i+0.5);
+        M[i+1][i]=-1/prm(i+0.5);
+        M[i][i+1]=-1/prm(i+0.5);
 }
-    M[n-1][n-1]=1;
+    M[n-1][n-1]=1/prm(n-0.5);
     }
 void MMatr(int n, complex **M ){      
     int i;
